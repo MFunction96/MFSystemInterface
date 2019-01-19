@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using MFSystemInterface.Models.Registry;
-using MFSystemInterface.Services.PInvoke.Enums;
+﻿using MFSystemInterface.Models.Registry;
 using MFSystemInterface.Services.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace MFSystemInterfaceTests.Models.Registry
 {
