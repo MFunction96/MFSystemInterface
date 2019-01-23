@@ -1,0 +1,16 @@
+[
+  {
+    "RegPath": {
+      "HKey": 2147483650,
+      "LpSubKey": "SOFTWARE\\7-Zip",
+      "LpValueName": "Path64",
+      "Is64BitRegistry": true
+    },
+    "LpType": 1,
+    "LpValue": "C:\\Program Files\\7-Zip\\",
+    "HKey": 2147483650,
+    "LpSubKey": "SOFTWARE\\7-Zip",
+    "LpValueName": "Path64",
+    "Is64BitRegistry": true
+  }
+]

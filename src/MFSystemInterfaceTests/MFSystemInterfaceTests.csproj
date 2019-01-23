@@ -63,12 +63,19 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="Models\Registry\RegKeyTests.cs" />
     <Compile Include="Models\Registry\RegPathTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.manifest" />
-    <None Include="Test\Models\Registry\RegPath.json">
+    <None Include="Test\Models\Registry\RegKey\Check.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Test\Models\Registry\RegKey\Get.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Test\Models\Registry\RegPath\ToString.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
@@ -83,6 +90,7 @@
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
+  <ItemGroup />
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

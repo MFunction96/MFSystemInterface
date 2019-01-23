@@ -1,5 +1,6 @@
 ﻿using MFSystemInterface.Services.PInvoke;
 using MFSystemInterface.Services.PInvoke.Enums;
+using MFSystemInterface.Services.Utils;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -19,12 +20,14 @@ namespace MFSystemInterface.Models.Registry
     public class RegPath : ICloneable, IComparable, IDisposable
     {
         #region Properties
+
         /// <summary>
-        /// 
+        /// 字符串与注册表内部类型转换字典。
         /// </summary>
         public static Dictionary<string, REG_ROOT_KEY> RegRootKeys { get; }
+
         /// <summary>
-        /// 
+        /// 注册表内部类型与字符串转换字典。
         /// </summary>
         protected static Dictionary<REG_ROOT_KEY, string> ResRegRootKeys { get; }
 
@@ -32,28 +35,35 @@ namespace MFSystemInterface.Models.Registry
         /// 注册表根键。
         /// </summary>
         public REG_ROOT_KEY HKey { get; set; }
+
         /// <summary>
         /// 注册表子键。
         /// </summary>
         public string LpSubKey { get; set; }
+
         /// <summary>
         /// 注册表键名。
         /// </summary>
         public string LpValueName { get; set; }
+
         /// <summary>
-        /// 
+        /// 64位注册表项。
+        /// 注：64位操作系统会重定向32位应用程序注册表访问，此属性仅用于修正32位应用程序的64位注册表项访问。
         /// </summary>
         public bool Is64BitRegistry { get; set; }
+
         #endregion
 
         #region Construction
+
         /// <summary>
-        /// 
+        /// 全局初始化字符串、字符串转换字典。
         /// </summary>
         static RegPath()
         {
             RegRootKeys = new Dictionary<string, REG_ROOT_KEY>
             {
+                // ReSharper disable seventh StringLiteralTypo
                 ["HKEY_CLASSES_ROOT"] = REG_ROOT_KEY.HKEY_CLASSES_ROOT,
                 ["HKEY_CURRENT_USER"] = REG_ROOT_KEY.HKEY_CURRENT_USER,
                 ["HKEY_LOCAL_MACHINE"] = REG_ROOT_KEY.HKEY_LOCAL_MACHINE,
@@ -73,6 +83,7 @@ namespace MFSystemInterface.Models.Registry
                 [REG_ROOT_KEY.HKEY_DYN_DATA] = "HKEY_DYN_DATA"
             };
         }
+
         /// <summary>
         /// 注册表路径信息类序列化构造函数。
         /// </summary>
@@ -128,6 +139,7 @@ namespace MFSystemInterface.Models.Registry
             HKey = hKey;
             LpSubKey = lpSubKey;
             LpValueName = lpValueName;
+            Is64BitRegistry = is64BitRegistry;
         }
 
         /// <summary>
@@ -141,7 +153,9 @@ namespace MFSystemInterface.Models.Registry
             HKey = regPath.HKey;
             LpSubKey = regPath.LpSubKey;
             LpValueName = regPath.LpValueName;
+            Is64BitRegistry = regPath.Is64BitRegistry;
         }
+
         #endregion
 
         #region Methods
@@ -172,39 +186,48 @@ namespace MFSystemInterface.Models.Registry
         /// </returns>
         public int CompareTo(object obj)
         {
-            if (!(obj is RegPath regpath)) throw new NullReferenceException();
-            if (HKey < regpath.HKey) return 1;
-            if (HKey > regpath.HKey) return -1;
-            var flag = string.CompareOrdinal(LpSubKey, regpath.LpSubKey);
+            if (!(obj is RegPath reg_path)) throw new NullReferenceException();
+            if (HKey < reg_path.HKey) return 1;
+            if (HKey > reg_path.HKey) return -1;
+            var flag = string.CompareOrdinal(LpSubKey, reg_path.LpSubKey);
             return flag != 0 ? flag : string.CompareOrdinal(LpValueName, LpValueName);
         }
 
         /// <inheritdoc />
+        /// <summary>
+        /// 主动析构的析构函数。
+        /// </summary>
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
         /// <summary>
-        /// 
+        /// 主动析构内部析构逻辑。
         /// </summary>
-        /// <param name="disposing"></param>
+        /// <param name="disposing">
+        /// 是否主动析构。
+        /// true是主动析构。
+        /// false是被动析构。
+        /// </param>
         protected virtual void Dispose(bool disposing)
         {
             //if (!disposing) return;
 
         }
         /// <summary>
-        /// 
+        /// 由GC被动析构时使用的析构函数。
         /// </summary>
         ~RegPath()
         {
             Dispose(false);
         }
         /// <summary>
-        /// 
+        /// 注册表路径信息。
         /// </summary>
-        /// <returns></returns>
+        /// <returns>
+        /// 字符串表现的注册表路径信息。
+        /// </returns>
         public override string ToString()
         {
             var str = ResRegRootKeys[HKey];
@@ -214,40 +237,56 @@ namespace MFSystemInterface.Models.Registry
             return str;
         }
         /// <summary>
-        /// 
+        /// 判断对象是否相等。
         /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
+        /// <param name="obj">
+        /// 待判断的对象。
+        /// </param>
+        /// <returns>
+        /// 对象是否与本对象相同。
+        /// true表示相同。
+        /// false表示不同。
+        /// </returns>
         public override bool Equals(object obj)
         {
-            if (!(obj is RegPath regpath)) throw new NullReferenceException();
-            return Equals(regpath);
+            if (!(obj is RegPath reg_path)) return false;
+            return Equals(reg_path);
         }
         /// <summary>
-        /// 
+        /// 判断对象是否相等。
         /// </summary>
-        /// <param name="regPath"></param>
-        /// <returns></returns>
+        /// <param name="regPath">
+        /// 待判断的对象。
+        /// </param>
+        /// <returns>
+        /// 对象是否与本对象相同。
+        /// true表示相同。
+        /// false表示不同。
+        /// </returns>
         protected bool Equals(RegPath regPath)
         {
-            return HKey == regPath.HKey && 
+            /*return HKey == regPath.HKey && 
                    string.Equals(LpSubKey, regPath.LpSubKey) && 
                    string.Equals(LpValueName, regPath.LpValueName) && 
-                   Is64BitRegistry == regPath.Is64BitRegistry;
+                   Is64BitRegistry == regPath.Is64BitRegistry;*/
+            return BinaryUtil.ComputeSHA1(this) == BinaryUtil.ComputeSHA1(regPath);
         }
         /// <summary>
-        /// 
+        /// 获取对象哈希值。
         /// </summary>
-        /// <returns></returns>
+        /// <returns>
+        /// 对象哈希值。
+        /// </returns>
         public override int GetHashCode()
         {
             unchecked
             {
-                var hashCode = (int) HKey;
-                hashCode = (hashCode * 397) ^ (LpSubKey != null ? LpSubKey.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ (LpValueName != null ? LpValueName.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ Is64BitRegistry.GetHashCode();
-                return hashCode;
+                // ReSharper disable twice NonReadonlyMemberInGetHashCode
+                var hash_code = (int) HKey;
+                hash_code = (hash_code * 397) ^ (LpSubKey != null ? LpSubKey.GetHashCode() : 0);
+                hash_code = (hash_code * 397) ^ (LpValueName != null ? LpValueName.GetHashCode() : 0);
+                hash_code = (hash_code * 397) ^ Is64BitRegistry.GetHashCode();
+                return hash_code;
             }
         }
 
@@ -261,39 +300,43 @@ namespace MFSystemInterface.Models.Registry
         /// <returns>
         /// 注册表子键句柄
         /// </returns>
-        protected IntPtr RegOpenKey()
+        protected (IntPtr, bool) RegOpenKey(KEY_ACCESS_TYPE keyAccessType)
         {
-            int regopenkeytmp;
-            IntPtr phkresult;
-            if (Environment.Is64BitOperatingSystem && Is64BitRegistry)
+            int reg_open_key;
+            IntPtr phk_result;
+            var is64_bit_registry = false;
+            if (Judge64BitRegistry())
             {
-                regopenkeytmp = NativeMethods.RegOpenKeyEx(new IntPtr((int)HKey), LpSubKey, 0,
+                reg_open_key = NativeMethods.RegOpenKeyEx(new IntPtr((int)HKey), LpSubKey, 0,
                     (int)KEY_SAM_FLAGS.KEY_WOW64_64KEY |
-                    (int)KEY_ACCESS_TYPE.KEY_READ, out phkresult);
+                    (int)keyAccessType, out phk_result);
+                is64_bit_registry = true;
             }
             else
             {
-                regopenkeytmp = NativeMethods.RegOpenKeyEx(new IntPtr((int)HKey), LpSubKey, 0,
-                    (int)KEY_ACCESS_TYPE.KEY_READ, out phkresult);
+                reg_open_key = NativeMethods.RegOpenKeyEx(new IntPtr((int)HKey), LpSubKey, 0,
+                    (int)keyAccessType, out phk_result);
             }
 
-            if (regopenkeytmp == (int)ERROR_CODE.ERROR_FILE_NOT_FOUND)
+            if (reg_open_key == (int)ERROR_CODE.ERROR_FILE_NOT_FOUND)
             {
-                throw new NullReferenceException($"注册表访问失败\n错误代码：{regopenkeytmp}\n{nameof(RegOpenKey)}");
+                throw new NullReferenceException($"注册表项不存在\n错误代码：{reg_open_key}\n{nameof(RegOpenKey)}");
             }
 
-            if (regopenkeytmp != (int)ERROR_CODE.ERROR_SUCCESS)
+            if (reg_open_key != (int)ERROR_CODE.ERROR_SUCCESS)
             {
-                throw new SystemException($"注册表访问失败\n错误代码：{regopenkeytmp}\n{nameof(RegOpenKey)}");
+                throw new SystemException($"注册表访问失败\n错误代码：{reg_open_key}\n{nameof(RegOpenKey)}");
             }
 
-            return phkresult;
+            return (phk_result, is64_bit_registry);
         }
 
         /// <summary>
         /// 转换注册表所需数据。
         /// </summary>
-        /// <param name="lpKind">
+        /// <param name="is64BitRegistry">
+        /// </param>
+        /// <param name="lpType">
         /// 注册表键值类型。
         /// </param>
         /// <param name="lpData">
@@ -305,44 +348,61 @@ namespace MFSystemInterface.Models.Registry
         /// <returns>
         /// 转换为已封装数据。
         /// </returns>
-        protected RegKey ConvertData(REG_KEY_TYPE lpKind, IntPtr lpData, int lpcbData)
+        protected RegKey ConvertData(bool is64BitRegistry ,REG_KEY_TYPE lpType, IntPtr lpData, int lpcbData)
         {
-            RegKey regkey;
-            if (lpKind == REG_KEY_TYPE.REG_DWORD)
+            RegKey reg_key;
+            if (lpType == REG_KEY_TYPE.REG_DWORD)
             {
-                var lpdataint = Marshal.ReadInt32(lpData);
-                regkey = new RegKey(this, lpKind, lpdataint);
+                var lp_data_int = Marshal.ReadInt32(lpData);
+                reg_key = new RegKey(this, lpType, lp_data_int);
             }
-            else if (lpKind == REG_KEY_TYPE.REG_QWORD)
+            else if (lpType == REG_KEY_TYPE.REG_QWORD)
             {
-                var lpdataint = Marshal.ReadInt64(lpData);
-                regkey = new RegKey(this, lpKind, lpdataint);
+                var lp_data_long = Marshal.ReadInt64(lpData);
+                reg_key = new RegKey(this, lpType, lp_data_long);
             }
-            else if (lpKind == REG_KEY_TYPE.REG_SZ ||
-                     lpKind == REG_KEY_TYPE.REG_EXPAND_SZ ||
-                     lpKind == REG_KEY_TYPE.REG_MULTI_SZ)
+            else if (lpType == REG_KEY_TYPE.REG_SZ ||
+                     lpType == REG_KEY_TYPE.REG_EXPAND_SZ ||
+                     lpType == REG_KEY_TYPE.REG_MULTI_SZ)
             {
-                var lpdatastr = Marshal.PtrToStringUni(lpData);
-                lpdatastr = lpdatastr?.Trim();
-                regkey = new RegKey(this, lpKind, lpdatastr);
+                var lp_data_str = Marshal.PtrToStringUni(lpData);
+                lp_data_str = lp_data_str?.Trim();
+                reg_key = new RegKey(this, lpType, lp_data_str);
             }
-            else if (lpKind == REG_KEY_TYPE.REG_BINARY)
+            else if (lpType == REG_KEY_TYPE.REG_BINARY)
             {
-                var lpdatabin = new byte[lpcbData];
-                Marshal.Copy(lpData, lpdatabin, 0, lpcbData);
-                regkey = new RegKey(this, lpKind, lpdatabin);
+                var lp_data_bin = new byte[lpcbData];
+                Marshal.Copy(lpData, lp_data_bin, 0, lpcbData);
+                reg_key = new RegKey(this, lpType, lp_data_bin);
             }
             else
             {
                 throw new DataException($"注册表访问失败\n注册表数据类型异常\n{nameof(ConvertData)}");
             }
 
-            return regkey;
+            return reg_key;
         }
 
         #endregion
 
         #region Public
+
+        /// <summary>
+        /// 判断当前注册表项是否是64位注册表项。
+        /// </summary>
+        /// <param name="fixProperty">
+        /// 判断时是否同时修正当前注册表项属性。
+        /// </param>
+        /// <returns>
+        /// 当前注册表项是否是64位注册表项。
+        /// true是64位注册表项。
+        /// false不是64位注册表项。
+        /// </returns>
+        public bool Judge64BitRegistry(bool fixProperty = true)
+        {
+            if (fixProperty) return Is64BitRegistry = Environment.Is64BitOperatingSystem && Is64BitRegistry;
+            return Environment.Is64BitOperatingSystem && Is64BitRegistry;
+        }
 
         /// <summary>
         /// 获取注册表键信息。
@@ -355,37 +415,37 @@ namespace MFSystemInterface.Models.Registry
         /// </returns>
         public RegKey Get()
         {
-            RegKey regkey;
+            RegKey reg_key;
             try
             {
-                var phkresult = RegOpenKey();
-                var lpcbData = 0;
-                NativeMethods.RegQueryValueEx(phkresult, LpValueName, IntPtr.Zero, out var lpkind, IntPtr.Zero, ref lpcbData);
-                if (lpcbData == 0)
+                var (phk_result, is_64_bit_registry) = RegOpenKey(KEY_ACCESS_TYPE.KEY_READ);
+                var lp_cb_data = 0;
+                NativeMethods.RegQueryValueEx(phk_result, LpValueName, IntPtr.Zero, out var lp_type, IntPtr.Zero, ref lp_cb_data);
+                if (lp_cb_data == 0)
                 {
-                    NativeMethods.RegCloseKey(phkresult);
+                    NativeMethods.RegCloseKey(phk_result);
                     throw new InternalBufferOverflowException($"注册表访问失败\n无法获取缓冲区大小\n{nameof(Get)}");
                 }
-                var lpdata = Marshal.AllocHGlobal(lpcbData);
-                var reggetvaluetemp = NativeMethods.RegQueryValueEx(phkresult, LpValueName, IntPtr.Zero, out lpkind, lpdata, ref lpcbData);
-                if (reggetvaluetemp != (int)ERROR_CODE.ERROR_SUCCESS)
+                var lp_data = Marshal.AllocHGlobal(lp_cb_data);
+                var reg_get_value_temp = NativeMethods.RegQueryValueEx(phk_result, LpValueName, IntPtr.Zero, out lp_type, lp_data, ref lp_cb_data);
+                if (reg_get_value_temp != (int)ERROR_CODE.ERROR_SUCCESS)
                 {
-                    throw new Exception($"注册表访问失败\n错误代码：{reggetvaluetemp}\n{nameof(Get)}");
+                    throw new Exception($"注册表访问失败\n错误代码：{reg_get_value_temp}\n{nameof(Get)}");
                 }
-                NativeMethods.RegCloseKey(phkresult);
-                if (reggetvaluetemp != (int)ERROR_CODE.ERROR_SUCCESS)
+                NativeMethods.RegCloseKey(phk_result);
+                if (reg_get_value_temp != (int)ERROR_CODE.ERROR_SUCCESS)
                 {
-                    throw new Exception($"注册表访问失败\n错误代码：{reggetvaluetemp}\n{nameof(Get)}");
+                    throw new Exception($"注册表访问失败\n错误代码：{reg_get_value_temp}\n{nameof(Get)}");
                 }
 
-                regkey = ConvertData((REG_KEY_TYPE)lpkind, lpdata, lpcbData);
-                Marshal.FreeHGlobal(lpdata);
+                reg_key = ConvertData(is_64_bit_registry, (REG_KEY_TYPE)lp_type, lp_data, lp_cb_data);
+                Marshal.FreeHGlobal(lp_data);
             }
             catch (Exception)
             {
-                regkey = new RegKey(this);
+                reg_key = new RegKey(this);
             }
-            return regkey;
+            return reg_key;
         }
 
         /// <summary>
@@ -396,29 +456,30 @@ namespace MFSystemInterface.Models.Registry
         /// </returns>
         public ICollection<RegPath> EnumKeys()
         {
-            var phkresult = RegOpenKey();
+            var (phk_result, is_64_bit_registry) = RegOpenKey(KEY_ACCESS_TYPE.KEY_READ);
             var list = new List<RegPath>();
             for (var index = 0; ; index++)
             {
                 var sb = new StringBuilder(0x7FFF);
                 var size = 0x7FFF;
-                var regenumkeytmp = NativeMethods.RegEnumKeyEx(phkresult, index, sb, ref size, IntPtr.Zero,
+                var reg_enum_key = NativeMethods.RegEnumKeyEx(phk_result, index, sb, ref size, IntPtr.Zero,
                     IntPtr.Zero,
                     IntPtr.Zero, out _);
-                if (regenumkeytmp == (int)ERROR_CODE.ERROR_NO_MORE_ITEMS)
+                if (reg_enum_key == (int)ERROR_CODE.ERROR_NO_MORE_ITEMS)
                 {
                     break;
                 }
 
-                if (regenumkeytmp != (int)ERROR_CODE.ERROR_SUCCESS)
+                if (reg_enum_key != (int)ERROR_CODE.ERROR_SUCCESS)
                 {
-                    throw new Exception($"注册表键值枚举失败\n错误代码：{regenumkeytmp}\n{nameof(EnumKeys)}");
+                    throw new Exception($"注册表键值枚举失败\n错误代码：{reg_enum_key}\n{nameof(EnumKeys)}");
                 }
 
-                list.Add(new RegPath(HKey, string.IsNullOrEmpty(LpSubKey) ? sb.ToString() : $"{LpSubKey}\\{sb}"));
+                list.Add(new RegPath(HKey, string.IsNullOrEmpty(LpSubKey) ? sb.ToString() : $"{LpSubKey}\\{sb}",
+                    string.Empty, is_64_bit_registry));
             }
 
-            NativeMethods.RegCloseKey(phkresult);
+            NativeMethods.RegCloseKey(phk_result);
             list.Sort();
             return list;
         }
@@ -434,37 +495,37 @@ namespace MFSystemInterface.Models.Registry
         /// </returns>
         public ICollection<RegKey> EnumValues(bool defaultReg = false)
         {
-            var phkresult = RegOpenKey();
+            var (phk_result, is_64_bit_registry) = RegOpenKey(KEY_ACCESS_TYPE.KEY_READ);
             var list = new List<RegKey>();
             for (var index = 0; ; index++)
             {
                 var sb = new StringBuilder(0x7FFF);
                 var size = 0x7FFF;
-                var lpcbdata = 0;
-                var regenumvaluetmp = NativeMethods.RegEnumValue(phkresult, index, sb, ref size, IntPtr.Zero,
-                    out var lpkind,
-                    IntPtr.Zero, ref lpcbdata);
+                var lpcb_data = 0;
+                var reg_enum_value = NativeMethods.RegEnumValue(phk_result, index, sb, ref size, IntPtr.Zero,
+                    out var lp_type,
+                    IntPtr.Zero, ref lpcb_data);
                 size += 2;
-                if (regenumvaluetmp == (int)ERROR_CODE.ERROR_NO_MORE_ITEMS) break;
-                if (regenumvaluetmp == (int)ERROR_CODE.ERROR_FILE_NOT_FOUND)
-                    throw new NullReferenceException($"注册表键值枚举失败\n错误代码：{regenumvaluetmp}\n{nameof(EnumValues)}");
-                if (regenumvaluetmp != (int)ERROR_CODE.ERROR_SUCCESS)
-                    throw new Exception($"注册表键值枚举失败\n错误代码：{regenumvaluetmp}\n{nameof(EnumValues)}");
-                var lpdata = Marshal.AllocHGlobal(lpcbdata);
-                regenumvaluetmp = NativeMethods.RegEnumValue(phkresult, index, sb, ref size, IntPtr.Zero,
-                    out lpkind,
-                    lpdata, ref lpcbdata);
-                if (regenumvaluetmp != (int)ERROR_CODE.ERROR_SUCCESS)
-                    throw new Exception($"注册表键值枚举失败\n错误代码：{regenumvaluetmp}\n{nameof(EnumValues)}");
+                if (reg_enum_value == (int)ERROR_CODE.ERROR_NO_MORE_ITEMS) break;
+                if (reg_enum_value == (int)ERROR_CODE.ERROR_FILE_NOT_FOUND)
+                    throw new NullReferenceException($"注册表键值枚举失败\n错误代码：{reg_enum_value}\n{nameof(EnumValues)}");
+                if (reg_enum_value != (int)ERROR_CODE.ERROR_SUCCESS)
+                    throw new Exception($"注册表键值枚举失败\n错误代码：{reg_enum_value}\n{nameof(EnumValues)}");
+                var lp_data = Marshal.AllocHGlobal(lpcb_data);
+                reg_enum_value = NativeMethods.RegEnumValue(phk_result, index, sb, ref size, IntPtr.Zero,
+                    out lp_type,
+                    lp_data, ref lpcb_data);
+                if (reg_enum_value != (int)ERROR_CODE.ERROR_SUCCESS)
+                    throw new Exception($"注册表键值枚举失败\n错误代码：{reg_enum_value}\n{nameof(EnumValues)}");
                 var str = sb.ToString().Trim();
                 if (!defaultReg && str == string.Empty) continue;
-                var regkey = ConvertData((REG_KEY_TYPE)lpkind, lpdata, lpcbdata);
-                Marshal.FreeHGlobal(lpdata);
-                list.Add(regkey);
+                var reg_key = ConvertData(is_64_bit_registry, (REG_KEY_TYPE)lp_type, lp_data, lpcb_data);
+                Marshal.FreeHGlobal(lp_data);
+                list.Add(reg_key);
 
             }
 
-            NativeMethods.RegCloseKey(phkresult);
+            NativeMethods.RegCloseKey(phk_result);
             list.Sort();
             return list;
         }
@@ -477,33 +538,50 @@ namespace MFSystemInterface.Models.Registry
         /// </returns>
         public void Delete()
         {
-            int regdelkeytmp;
+            int reg_delete_key;
             if (string.IsNullOrEmpty(LpValueName))
             {
-                regdelkeytmp = NativeMethods.RegDeleteKeyEx(new IntPtr((int)HKey), LpSubKey,
-                    (int)KEY_SAM_FLAGS.KEY_WOW64_64KEY | (int)KEY_ACCESS_TYPE.KEY_SET_VALUE, 0);
-                if (regdelkeytmp != (int)ERROR_CODE.ERROR_SUCCESS)
+                if (Judge64BitRegistry())
                 {
-                    throw new Exception($"注册表访问失败\n错误代码：{regdelkeytmp}\n{nameof(Delete)}");
+                    reg_delete_key = NativeMethods.RegDeleteKeyEx(new IntPtr((int)HKey), LpSubKey,
+                        (int)KEY_SAM_FLAGS.KEY_WOW64_64KEY | (int)KEY_ACCESS_TYPE.KEY_SET_VALUE, 0);
+                }
+                else
+                {
+                    reg_delete_key = NativeMethods.RegDeleteKeyEx(new IntPtr((int)HKey), LpSubKey,
+                        (int)KEY_ACCESS_TYPE.KEY_SET_VALUE, 0);
+                }
+                if (reg_delete_key != (int)ERROR_CODE.ERROR_SUCCESS)
+                {
+                    throw new Exception($"注册表访问失败\n错误代码：{reg_delete_key}\n{nameof(Delete)}");
                 }
             }
             else
             {
-                regdelkeytmp = NativeMethods.RegOpenKeyEx(new IntPtr((int)HKey), LpSubKey, 0,
-                    (int)KEY_SAM_FLAGS.KEY_WOW64_64KEY |
-                    (int)KEY_ACCESS_TYPE.KEY_SET_VALUE, out var phkresult);
-                if (regdelkeytmp != (int)ERROR_CODE.ERROR_SUCCESS)
+                IntPtr phk_result;
+                if (Judge64BitRegistry())
                 {
-                    throw new Exception($"注册表访问失败\n错误代码：{regdelkeytmp}\n{nameof(Delete)}");
+                    reg_delete_key = NativeMethods.RegOpenKeyEx(new IntPtr((int)HKey), LpSubKey, 0,
+                        (int)KEY_SAM_FLAGS.KEY_WOW64_64KEY | (int)KEY_ACCESS_TYPE.KEY_SET_VALUE, out phk_result);
+                }
+                else
+                {
+                    reg_delete_key = NativeMethods.RegOpenKeyEx(new IntPtr((int)HKey), LpSubKey, 0,
+                        (int)KEY_ACCESS_TYPE.KEY_SET_VALUE, out phk_result);
+                }
+                
+                if (reg_delete_key != (int)ERROR_CODE.ERROR_SUCCESS)
+                {
+                    throw new Exception($"注册表访问失败\n错误代码：{reg_delete_key}\n{nameof(Delete)}");
                 }
 
-                regdelkeytmp = NativeMethods.RegDeleteValue(phkresult, LpValueName);
-                if (regdelkeytmp != (int)ERROR_CODE.ERROR_SUCCESS)
+                reg_delete_key = NativeMethods.RegDeleteValue(phk_result, LpValueName);
+                if (reg_delete_key != (int)ERROR_CODE.ERROR_SUCCESS)
                 {
-                    throw new Exception($"注册表访问失败\n错误代码：{regdelkeytmp}\n{nameof(Delete)}");
+                    throw new Exception($"注册表访问失败\n错误代码：{reg_delete_key}\n{nameof(Delete)}");
                 }
 
-                NativeMethods.RegCloseKey(phkresult);
+                NativeMethods.RegCloseKey(phk_result);
             }
         }
 

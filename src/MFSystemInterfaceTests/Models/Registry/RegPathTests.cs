@@ -11,11 +11,11 @@ namespace MFSystemInterfaceTests.Models.Registry
         [TestMethod()]
         public void ToStringTest()
         {
-            var tests = FileUtil.ImportJson<ICollection<RegPath>>("Test\\Models\\Registry\\RegPath.json");
+            var tests = FileUtil.ImportJson<ICollection<RegPath>>("Test\\Models\\Registry\\RegPath\\ToString.json");
             foreach (var test in tests)
             {
                 var result = new RegPath(test.ToString());
-                Assert.AreEqual(test, result);
+                Assert.AreEqual(test, result, $"Expected:\n{test}\nActual:\n{result}");
             }
         }
         
