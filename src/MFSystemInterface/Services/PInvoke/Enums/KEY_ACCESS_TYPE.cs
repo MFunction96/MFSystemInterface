@@ -8,7 +8,7 @@ namespace MFSystemInterface.Services.PInvoke.Enums
     /// 注册表访问权限。
     /// </summary>
     [Flags]
-    public enum KEY_ACCESS_TYPE
+    internal enum KEY_ACCESS_TYPE
     {
         KEY_ALL_ACCESS = 0x3F,
         KEY_READ = 0x20019,

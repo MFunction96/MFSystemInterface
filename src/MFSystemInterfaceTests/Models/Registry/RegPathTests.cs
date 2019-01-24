@@ -1,5 +1,5 @@
-﻿using MFSystemInterface.Models.Registry;
-using MFSystemInterface.Services.Utils;
+﻿using MFStandardUtil.Utils;
+using MFSystemInterface.Models.Registry;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 

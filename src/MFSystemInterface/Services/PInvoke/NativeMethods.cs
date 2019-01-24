@@ -1,4 +1,5 @@
 ﻿using MFSystemInterface.Services.PInvoke.Enums;
+using MFSystemInterface.Services.PInvoke.Structures;
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -435,6 +436,71 @@ namespace MFSystemInterface.Services.PInvoke
         /// </returns>
         [DllImport("advapi32.dll", SetLastError = true)]
         internal static extern bool GetTokenInformation(IntPtr tokenHandle, TOKEN_INFORMATION_CLASS tokenInformationClass, IntPtr tokenInformation, uint tokenInformationLength, out uint returnLength);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="lpApplicationName"></param>
+        /// <param name="lpCommandLine"></param>
+        /// <param name="lpProcessAttributes"></param>
+        /// <param name="lpThreadAttributes"></param>
+        /// <param name="bInheritHandles"></param>
+        /// <param name="dwCreationFlags"></param>
+        /// <param name="lpEnvironment"></param>
+        /// <param name="lpCurrentDirectory"></param>
+        /// <param name="lpStartupInfo"></param>
+        /// <param name="lpProcessInformation"></param>
+        /// <returns></returns>
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode, EntryPoint = "CreateProcessW")]
+        internal static extern bool CreateProcess(
+            [MarshalAs(UnmanagedType.LPWStr)] string lpApplicationName,
+            [MarshalAs(UnmanagedType.LPWStr)] string lpCommandLine,
+            IntPtr lpProcessAttributes,
+            IntPtr lpThreadAttributes,
+            bool bInheritHandles,
+            int dwCreationFlags,
+            IntPtr lpEnvironment,
+            [MarshalAs(UnmanagedType.LPWStr)] string lpCurrentDirectory,
+            ref STARTUPINFO lpStartupInfo,
+            out PROCESS_INFORMATION lpProcessInformation);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="hHandle"></param>
+        /// <param name="dwMilliseconds"></param>
+        /// <param name="bAlertable"></param>
+        /// <returns></returns>
+        [DllImport("kernel32.dll", SetLastError = true)]
+        internal static extern int WaitForSingleObjectEx(
+            IntPtr hHandle,
+            int dwMilliseconds,
+            bool bAlertable);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="destination"></param>
+        /// <param name="source"></param>
+        /// <param name="length"></param>
+        [DllImport("kernel32.dll", SetLastError = true)]
+        internal static extern void CopyMemory(IntPtr destination, IntPtr source, int length);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="esFlags"></param>
+        /// <returns></returns>
+        [DllImport("kernel32.dll", SetLastError = true)]
+        internal static extern EXECUTION_STATE SetThreadExecutionState(EXECUTION_STATE esFlags);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="fBlockIt"></param>
+        /// <returns></returns>
+        [DllImport("user32.dll", SetLastError = true)]
+        internal static extern bool BlockInput(bool fBlockIt);
 
     }
 }

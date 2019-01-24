@@ -2,7 +2,7 @@
 
 namespace MFSystemInterface.Services.PInvoke.Enums
 {
-    public enum TOKEN_ELEVATION_TYPE
+    internal enum TOKEN_ELEVATION_TYPE
     {
         TokenElevationTypeDefault = 1,
         TokenElevationTypeFull,

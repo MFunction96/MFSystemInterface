@@ -16,6 +16,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MFStandardUtil", "ref\MFStandardUtil\src\MFStandardUtil\MFStandardUtil.csproj", "{BC82A93F-2A53-4CF4-A465-98A8CACB9402}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,6 +32,10 @@ Global
 		{4132D4B8-5E45-4CA8-BECA-A42127C32A04}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4132D4B8-5E45-4CA8-BECA-A42127C32A04}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4132D4B8-5E45-4CA8-BECA-A42127C32A04}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC82A93F-2A53-4CF4-A465-98A8CACB9402}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC82A93F-2A53-4CF4-A465-98A8CACB9402}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC82A93F-2A53-4CF4-A465-98A8CACB9402}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC82A93F-2A53-4CF4-A465-98A8CACB9402}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

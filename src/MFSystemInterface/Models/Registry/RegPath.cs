@@ -1,6 +1,6 @@
-﻿using MFSystemInterface.Services.PInvoke;
+﻿using MFStandardUtil.Utils;
+using MFSystemInterface.Services.PInvoke;
 using MFSystemInterface.Services.PInvoke.Enums;
-using MFSystemInterface.Services.Utils;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -300,7 +300,7 @@ namespace MFSystemInterface.Models.Registry
         /// <returns>
         /// 注册表子键句柄
         /// </returns>
-        protected (IntPtr, bool) RegOpenKey(KEY_ACCESS_TYPE keyAccessType)
+        internal (IntPtr, bool) RegOpenKey(KEY_ACCESS_TYPE keyAccessType)
         {
             int reg_open_key;
             IntPtr phk_result;

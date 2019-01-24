@@ -2,7 +2,7 @@
 
 namespace MFSystemInterface.Services.PInvoke.Enums
 {
-    public enum TOKEN_INFORMATION_CLASS
+    internal enum TOKEN_INFORMATION_CLASS
     {
         TokenUser = 1,
         TokenGroups,
